@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_project/provider/service_provider.dart';
 
+import '../auth/authscreen.dart';
 import '../common/show.dart';
 import '../widget/card_todo_widget.dart';
 
@@ -13,6 +15,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
     final todoData = ref.watch(fetchDataProvider);
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
@@ -45,8 +48,22 @@ class HomePage extends ConsumerWidget {
                   icon: const Icon(CupertinoIcons.calendar),
                 ),
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(CupertinoIcons.bell),
+                  onPressed: () {
+                    onPressed: () async {
+                      try {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>  AuthScreen()),
+                        );
+                        await _auth.signOut();
+
+
+                      } catch (e) {
+                        print('Error signing out: $e');
+                      }
+                    };
+                  },
+                  icon: Icon(Icons.exit_to_app),
                 ),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_project/auth/authscreen.dart';
 import 'package:todo_project/widget/card_todo_widget.dart';
 import 'View/home_page.dart';
 import 'common/show.dart';
@@ -14,7 +15,7 @@ void main() async{
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(),
-        home:  HomePage(),
+        home:  AuthScreen(),
       ),
     ),
   );
