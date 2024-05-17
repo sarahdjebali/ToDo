@@ -62,9 +62,9 @@ class HomePage extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Today\'s tasks',
                         style: TextStyle(
@@ -85,8 +85,8 @@ class HomePage extends ConsumerWidget {
                         builder: (context) => AddNewTask(),
                       );
                     },
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Icon(Icons.add),
                         Text('New Task'),
                       ],

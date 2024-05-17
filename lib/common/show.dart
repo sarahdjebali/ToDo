@@ -9,21 +9,24 @@ import '../provider/dateTime_provider.dart';
 import '../provider/radio_provider.dart';
 import '../widget/DateTime_Widget.dart';
 import '../widget/radio_widget.dart';
-import '../widget/textField_widget.dart';
 
-class AddNewTask extends ConsumerWidget {
-  AddNewTask({
-    super.key,
-  });
-
-  final titleController= TextEditingController();
-  final descriptionController= TextEditingController();
+class AddNewTask extends ConsumerStatefulWidget {
+  AddNewTask({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _AddNewTaskState createState() => _AddNewTaskState();
+}
+
+class _AddNewTaskState extends ConsumerState<AddNewTask> {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     final dateProv = ref.watch(dateProvider);
+
     return Container(
-      padding: EdgeInsets.all(30),
+      padding: const EdgeInsets.all(30),
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -32,7 +35,7 @@ class AddNewTask extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'New Task To Do',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -41,29 +44,44 @@ class AddNewTask extends ConsumerWidget {
               color: Colors.black,
             ),
           ),
-          Divider(
+          const Divider(
             thickness: 1.2,
             color: Colors.grey,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Title Task',
                 style: AppStyle.headingOne,
               ),
-              SizedBox(height: 6),
-              TextFieldWidget(
-                  maxLine: 1, hintText: 'Add a title for the new task', txtController: titleController, ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: 'Add a title for   the new task',
+                ),
+                maxLines: 1,
+              ),
+              const SizedBox(height: 10),
+              const Text(
                 'Description',
                 style: AppStyle.headingOne,
               ),
-              SizedBox(height: 6),
-              TextFieldWidget(maxLine: 5, hintText: 'Description', txtController: descriptionController, ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: 'Description',
+                ),
+                maxLines: 5,
+              ),
+              const SizedBox(height: 10),
+              const Text(
                 'Category',
                 style: AppStyle.headingOne,
               ),
@@ -107,19 +125,19 @@ class AddNewTask extends ConsumerWidget {
                     iconSelection: CupertinoIcons.calendar,
                     onTap: () async {
                       final getValue = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2021),
-                          lastDate: DateTime(2030));
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2021),
+                        lastDate: DateTime(2030),
+                      );
                       if (getValue != null) {
                         final format = DateFormat.yMEd();
-                        ref
-                            .read(dateProvider.notifier)
+                        ref.read(dateProvider.notifier)
                             .update((state) => format.format(getValue));
                       }
                     },
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   DateTimeWidget(
                     titleText: 'Time',
                     valueText: ref.watch(timeProvider),
@@ -130,73 +148,79 @@ class AddNewTask extends ConsumerWidget {
                         initialTime: TimeOfDay.now(),
                       );
                       if (getTime != null) {
-                        ref
-                            .read(timeProvider.notifier)
+                        ref.read(timeProvider.notifier)
                             .update((state) => getTime.format(context));
                       }
                     },
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade200,
-                            foregroundColor: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                        child: Text('Cancel'),
-                      )),
-                  SizedBox(
-                    width: 10,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade200,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
                   ),
+                  const SizedBox(width: 10),
                   Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade200,
-                            foregroundColor: Colors.white),
-                        onPressed: () {
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade200,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        final getRadioValue = ref.read(radioProvider);
+                        String category = '';
+                        switch (getRadioValue) {
+                          case 1:
+                            category = 'Learning';
+                            break;
+                          case 2:
+                            category = 'Working';
+                            break;
+                          case 3:
+                            category = 'General';
+                            break;
+                        }
+                        ref.read(serviceProvider).addNewTask(
+                          TodoModel(
+                            titleTask: titleController.text,
+                            description: descriptionController.text,
+                            Category: category,
+                            dateTask: ref.read(dateProvider),
+                            timeTask: ref.read(timeProvider),
+                            isDone: false,
+                          ),
+                        );
 
-                          final getRadioValue = ref.read(radioProvider);
-                          String Category ='';
-                          switch (getRadioValue){
-                            case 1:
-                              Category = 'Learning';
-                              break;
-                            case 2:
-                              Category ='Working';
-                              break;
-                            case 3:
-                              Category= 'General';
-                              break;
-
-                          }
-                          ref.read(serviceProvider).addNewTask(
-                              TodoModel(titleTask: titleController.text,
-                                  description: descriptionController.text,
-                                  Category: Category,
-                                  dateTask: ref.read(dateProvider),
-                                  timeTask: ref.read(timeProvider),
-                                  isDone: false,),
-                          );
-
-                      titleController.clear();
-                      descriptionController.clear();
-                      ref.read(radioProvider.notifier).update((state) => 0);
-                      Navigator.pop(context);
-                        },
-                        child: Text('Create'),
-                      )),
+                        titleController.clear();
+                        descriptionController.clear();
+                        ref.read(radioProvider.notifier).update((state) => 0);
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Create'),
+                    ),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 }
